@@ -17,16 +17,7 @@ class Breathwork extends StatefulWidget {
 }
 
 class _BreathworkState extends State<Breathwork> {
-  final List<int> _repetitionOptions = [2, 20, 30, 40];
-  int _totalRepetitions = 1;
-  BreathingSpeed _breathingSpeed = BreathingSpeed.medium;
   late SessionStatus status;
-
-  void setTotalRepetitions(int repetitions) {
-    setState(() {
-      _totalRepetitions = repetitions;
-    });
-  }
 
   void setStatus(SessionStatus newStatus) {
     setState(() {
@@ -45,12 +36,6 @@ class _BreathworkState extends State<Breathwork> {
     }
   }
 
-  void setBreathingSpeed(selectedSpeed) {
-    setState(() {
-      _breathingSpeed = selectedSpeed;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -64,7 +49,7 @@ class _BreathworkState extends State<Breathwork> {
         child: Consumer<BreathworkSession>(
             builder: (context, breathworkSession, child) {
           return Scaffold(body: Builder(builder: (context) {
-            switch (status) {
+            switch (breathworkSession.status) {
               case SessionStatus.options:
                 return BreathworkOptions(
                   key: UniqueKey(),
@@ -72,9 +57,9 @@ class _BreathworkState extends State<Breathwork> {
               case SessionStatus.breathing:
                 return Breathing(
                   key: UniqueKey(),
-                  durationInMilliseconds:
-                      getDurationInMilliseconds(_breathingSpeed),
-                  totalRepetitions: _totalRepetitions,
+                  durationInMilliseconds: getDurationInMilliseconds(
+                      breathworkSession.breathingSpeed),
+                  totalRepetitions: breathworkSession.totalRepetitions,
                 );
               case SessionStatus.breathhold:
                 return BreathHold(key: UniqueKey());

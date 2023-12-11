@@ -6,7 +6,7 @@ class BreathworkSession extends ChangeNotifier {
   int _totalRepetitions = 30;
   int _noOfRounds = 3;
   BreathingSpeed _breathingSpeed = BreathingSpeed.medium;
-  late SessionStatus _status;
+  late SessionStatus _status = SessionStatus.options;
   List<int> _breathholdDurations = [];
 
   int get totalRepetitions => _totalRepetitions;

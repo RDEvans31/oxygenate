@@ -46,7 +46,7 @@ class _BreathworkOptionsState extends State<BreathworkOptions> {
           children: [
             SizedBox(
                 height: 100,
-                width: 200,
+                width: 300,
                 child: Slider(
                   value: breathworkSession.noOfRounds.toDouble(),
                   onChanged: (value) {
@@ -57,24 +57,27 @@ class _BreathworkOptionsState extends State<BreathworkOptions> {
                   divisions: 4,
                   label: breathworkSession.noOfRounds.toString(),
                 )),
-            SegmentedButton(
-                segments: const [
-                  ButtonSegment(
-                      value: BreathingSpeed.slow, label: Text('Slow')),
-                  ButtonSegment(
-                      value: BreathingSpeed.medium, label: Text('Medium')),
-                  ButtonSegment(
-                      value: BreathingSpeed.fast, label: Text('Fast')),
-                ],
-                selected: {
-                  breathworkSession.breathingSpeed,
-                },
-                onSelectionChanged: (value) {
-                  breathworkSession.breathingSpeed = value.first;
-                }),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SegmentedButton(
+                  segments: const [
+                    ButtonSegment(
+                        value: BreathingSpeed.slow, label: Text('Slow')),
+                    ButtonSegment(
+                        value: BreathingSpeed.medium, label: Text('Medium')),
+                    ButtonSegment(
+                        value: BreathingSpeed.fast, label: Text('Fast')),
+                  ],
+                  selected: {
+                    breathworkSession.breathingSpeed,
+                  },
+                  onSelectionChanged: (value) {
+                    breathworkSession.breathingSpeed = value.first;
+                  }),
+            ),
             SizedBox(
                 height: 100,
-                width: 200,
+                width: 300,
                 child: Slider(
                   value: breathworkSession.totalRepetitions.toDouble(),
                   onChanged: (value) {
@@ -86,7 +89,9 @@ class _BreathworkOptionsState extends State<BreathworkOptions> {
                   label: breathworkSession.totalRepetitions.toString(),
                 )),
             ElevatedButton(
-                onPressed: () => print('start'), child: const Text('Start'))
+                onPressed: () =>
+                    breathworkSession.status = SessionStatus.breathing,
+                child: const Text('Start'))
           ],
         ),
       ));

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'breathwork.dart';
+import 'enum_session_status.dart';
+
 class Breathing extends StatefulWidget {
   final int durationInMilliseconds;
   final int totalRepetitions;
@@ -45,13 +48,13 @@ class _BreathingState extends State<Breathing>
         } else if (_currentRepetition == widget.totalRepetitions &&
             status == AnimationStatus.dismissed) {
           _controller.stop();
-          // Navigator.of(context).push(
-          //   MaterialPageRoute(
-          //     builder: (context) => const Breathwork(
-          //       sessionStatus: SessionStatus.breathhold,
-          //     ),
-          //   ),
-          // );
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const Breathwork(
+                sessionStatus: SessionStatus.breathhold,
+              ),
+            ),
+          );
         }
       });
 
