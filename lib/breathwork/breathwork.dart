@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oxygenate/breathwork/breathwork_options.dart';
+import 'package:oxygenate/breathwork/helpers/format_duration_to_string.dart';
+import 'package:oxygenate/breathwork/inhale_hold.dart';
 import 'breathhold.dart';
 import 'breathing.dart';
 import 'package:provider/provider.dart';
@@ -9,16 +11,14 @@ import 'state_breathwork_session.dart';
 
 class Breathwork extends StatefulWidget {
   final SessionStatus? sessionStatus;
-
-  const Breathwork({super.key, this.sessionStatus});
+  const Breathwork({Key? key, this.sessionStatus}) : super(key: key);
 
   @override
-  _BreathworkState createState() => _BreathworkState();
+  State<Breathwork> createState() => _BreathworkState();
 }
 
 class _BreathworkState extends State<Breathwork> {
-  late SessionStatus? status;
-
+  late SessionStatus status;
   int getDurationInMilliseconds(BreathingSpeed speed) {
     switch (speed) {
       case BreathingSpeed.slow:
@@ -32,53 +32,64 @@ class _BreathworkState extends State<Breathwork> {
 
   @override
   void initState() {
+    if (widget.sessionStatus != null) {
+      status = widget.sessionStatus!;
+    } else {
+      status = SessionStatus.options;
+    }
     super.initState();
-    print(widget.sessionStatus);
-    status = widget.sessionStatus ?? SessionStatus.options;
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<BreathworkSession>(
-        builder: (context, breathworkSession, child) {
-      return Scaffold(body: Builder(builder: (context) {
+      builder: (context, breathworkSession, child) {
         switch (status) {
           case SessionStatus.options:
-            return BreathworkOptions(
-              key: UniqueKey(),
-            );
+            return const BreathworkOptions();
           case SessionStatus.breathing:
             return Breathing(
-              key: UniqueKey(),
               durationInMilliseconds:
                   getDurationInMilliseconds(breathworkSession.breathingSpeed),
               totalRepetitions: breathworkSession.totalRepetitions,
             );
           case SessionStatus.breathhold:
-            return BreathHold(key: UniqueKey());
+            return const BreathHold();
+          case SessionStatus.inhaleHold:
+            return InhaleHold(breathworkSession: breathworkSession);
           case SessionStatus.finished:
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Finished!'),
-                  ElevatedButton(
+            List<String> breathworkDurationStrings = breathworkSession
+                .breathholdDurations
+                .map((Duration duration) => formatDisplayTime(duration))
+                .toList();
+            return Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Finished!'),
+                    Text('Breathhold durations: $breathworkDurationStrings'),
+                    ElevatedButton(
                       onPressed: () {
                         breathworkSession.reset();
-                        setState(() {
-                          status = SessionStatus.options;
-                        });
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const Breathwork(
+                              sessionStatus: SessionStatus.options,
+                            ),
+                          ),
+                        );
                       },
-                      child: const Text('Restart')),
-                  Text(
-                      'Breathhold durations: ${breathworkSession.breathholdDurations}'),
-                ],
+                      child: const Text('Restart'),
+                    ),
+                  ],
+                ),
               ),
             );
-          case null:
-            return Container();
+          default:
+            return const BreathworkOptions();
         }
-      }));
-    });
+      },
+    );
   }
 }

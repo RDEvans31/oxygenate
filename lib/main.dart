@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oxygenate/breathwork/breathwork.dart';
+import 'package:oxygenate/breathwork/enum_session_status.dart';
 import 'package:oxygenate/breathwork/state_breathwork_session.dart';
 import 'package:provider/provider.dart';
 
@@ -13,18 +14,16 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => BreathworkSession(),
       child: MaterialApp(
-          theme: ThemeData(
+        theme: ThemeData(
             useMaterial3: true,
             colorScheme: ColorScheme.fromSeed(
-                seedColor: Colors.tealAccent,
-                brightness: Brightness.dark,
-                background: const Color.fromRGBO(50, 50, 50, 1)),
-          ),
-          home: Consumer<BreathworkSession>(
-            builder: (context, breathworkSession, child) {
-              return const Breathwork();
-            },
-          )),
+              seedColor: Colors.amber,
+              brightness: Brightness.dark,
+            )),
+        home: const Breathwork(
+          sessionStatus: SessionStatus.options,
+        ),
+      ),
     );
   }
 }
