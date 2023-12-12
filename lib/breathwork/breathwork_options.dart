@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'breathwork.dart';
 import 'enum_breathing_speed.dart';
 import 'enum_session_status.dart';
 import 'state_breathwork_session.dart';
 
 class BreathworkOptions extends StatefulWidget {
-  final SessionStatus? sessionStatus;
-
-  const BreathworkOptions({super.key, this.sessionStatus});
+  const BreathworkOptions({super.key});
 
   @override
   _BreathworkOptionsState createState() => _BreathworkOptionsState();
 }
 
 class _BreathworkOptionsState extends State<BreathworkOptions> {
-  final List<int> _repetitionOptions = [2, 20, 30, 40];
-  BreathingSpeed _breathingSpeed = BreathingSpeed.medium;
-  late SessionStatus status;
-
   int getDurationInMilliseconds(BreathingSpeed speed) {
     switch (speed) {
       case BreathingSpeed.slow:
@@ -89,8 +84,13 @@ class _BreathworkOptionsState extends State<BreathworkOptions> {
                   label: breathworkSession.totalRepetitions.toString(),
                 )),
             ElevatedButton(
-                onPressed: () =>
-                    breathworkSession.status = SessionStatus.breathing,
+                onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const Breathwork(
+                          sessionStatus: SessionStatus.breathing,
+                        ),
+                      ),
+                    ),
                 child: const Text('Start'))
           ],
         ),

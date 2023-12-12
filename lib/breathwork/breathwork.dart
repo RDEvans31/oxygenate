@@ -17,13 +17,7 @@ class Breathwork extends StatefulWidget {
 }
 
 class _BreathworkState extends State<Breathwork> {
-  late SessionStatus status;
-
-  void setStatus(SessionStatus newStatus) {
-    setState(() {
-      status = newStatus;
-    });
-  }
+  late SessionStatus? status;
 
   int getDurationInMilliseconds(BreathingSpeed speed) {
     switch (speed) {
@@ -39,47 +33,52 @@ class _BreathworkState extends State<Breathwork> {
   @override
   void initState() {
     super.initState();
+    print(widget.sessionStatus);
     status = widget.sessionStatus ?? SessionStatus.options;
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-        create: (context) => BreathworkSession(),
-        child: Consumer<BreathworkSession>(
-            builder: (context, breathworkSession, child) {
-          return Scaffold(body: Builder(builder: (context) {
-            switch (breathworkSession.status) {
-              case SessionStatus.options:
-                return BreathworkOptions(
-                  key: UniqueKey(),
-                );
-              case SessionStatus.breathing:
-                return Breathing(
-                  key: UniqueKey(),
-                  durationInMilliseconds: getDurationInMilliseconds(
-                      breathworkSession.breathingSpeed),
-                  totalRepetitions: breathworkSession.totalRepetitions,
-                );
-              case SessionStatus.breathhold:
-                return BreathHold(key: UniqueKey());
-              case SessionStatus.finished:
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Finished!'),
-                      ElevatedButton(
-                          onPressed: () {
-                            setStatus(SessionStatus.options);
-                          },
-                          child: const Text('Restart'))
-                    ],
-                  ),
-                );
-            }
-            ;
-          }));
-        }));
+    return Consumer<BreathworkSession>(
+        builder: (context, breathworkSession, child) {
+      return Scaffold(body: Builder(builder: (context) {
+        switch (status) {
+          case SessionStatus.options:
+            return BreathworkOptions(
+              key: UniqueKey(),
+            );
+          case SessionStatus.breathing:
+            return Breathing(
+              key: UniqueKey(),
+              durationInMilliseconds:
+                  getDurationInMilliseconds(breathworkSession.breathingSpeed),
+              totalRepetitions: breathworkSession.totalRepetitions,
+            );
+          case SessionStatus.breathhold:
+            return BreathHold(key: UniqueKey());
+          case SessionStatus.finished:
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Finished!'),
+                  ElevatedButton(
+                      onPressed: () {
+                        breathworkSession.reset();
+                        setState(() {
+                          status = SessionStatus.options;
+                        });
+                      },
+                      child: const Text('Restart')),
+                  Text(
+                      'Breathhold durations: ${breathworkSession.breathholdDurations}'),
+                ],
+              ),
+            );
+          case null:
+            return Container();
+        }
+      }));
+    });
   }
 }

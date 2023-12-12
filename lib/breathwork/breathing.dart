@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:oxygenate/breathwork/state_breathwork_session.dart';
+import 'package:provider/provider.dart';
 
 import 'breathwork.dart';
 import 'enum_session_status.dart';
@@ -34,7 +36,6 @@ class _BreathingState extends State<Breathing>
       vsync: this,
       duration: Duration(milliseconds: widget.durationInMilliseconds),
     );
-
     final CurvedAnimation curve =
         CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine);
     _animation = Tween<double>(begin: 100.0, end: 200.0).animate(curve)
@@ -48,6 +49,7 @@ class _BreathingState extends State<Breathing>
         } else if (_currentRepetition == widget.totalRepetitions &&
             status == AnimationStatus.dismissed) {
           _controller.stop();
+          _controller.dispose();
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => const Breathwork(
@@ -62,48 +64,46 @@ class _BreathingState extends State<Breathing>
   }
 
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: AnimatedBuilder(
-          animation: _animation,
-          builder: (context, child) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 300,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        height: _animation.value,
-                        width: _animation.value,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
-                          shape: BoxShape.circle,
-                        ),
+    return Consumer<BreathworkSession>(
+      builder: (context, breathworkSession, child) {
+        return Scaffold(
+          body: Center(
+            child: AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 300,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            height: _animation.value,
+                            width: _animation.value,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          Text(
+                            _currentRepetition.toString(),
+                            style: const TextStyle(
+                                color: Colors.black, fontSize: 24),
+                          ),
+                        ],
                       ),
-                      Text(
-                        _currentRepetition.toString(),
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 24),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
