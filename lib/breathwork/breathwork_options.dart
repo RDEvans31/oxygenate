@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'breathwork.dart';
-import 'breathwork.dart';
 import 'enum_breathing_speed.dart';
 import 'enum_session_status.dart';
 import 'state_breathwork_session.dart';
 
 class BreathworkOptions extends StatefulWidget {
-  const BreathworkOptions({super.key});
   const BreathworkOptions({super.key});
 
   @override
@@ -32,7 +30,6 @@ class _BreathworkOptionsState extends State<BreathworkOptions> {
           children: [
             SizedBox(
                 height: 100,
-                width: 300,
                 width: 300,
                 child: Slider(
                   value: breathworkSession.noOfRounds.toDouble(),
@@ -65,7 +62,6 @@ class _BreathworkOptionsState extends State<BreathworkOptions> {
             SizedBox(
                 height: 100,
                 width: 300,
-                width: 300,
                 child: Slider(
                   value: breathworkSession.totalRepetitions.toDouble(),
                   onChanged: (value) {
@@ -77,14 +73,6 @@ class _BreathworkOptionsState extends State<BreathworkOptions> {
                   label: breathworkSession.totalRepetitions.toString(),
                 )),
             ElevatedButton(
-                onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const Breathwork(
-                          sessionStatus: SessionStatus.breathing,
-                        ),
-                      ),
-                    ),
-                child: const Text('Start'))
                 onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => const Breathwork(
