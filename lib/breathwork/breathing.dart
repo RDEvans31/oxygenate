@@ -59,7 +59,6 @@ class _BreathingState extends State<Breathing>
           );
         }
       });
-
     _controller.forward();
   }
 

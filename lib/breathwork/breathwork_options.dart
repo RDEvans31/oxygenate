@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'breathwork.dart';
+import 'breathwork.dart';
 import 'enum_breathing_speed.dart';
 import 'enum_session_status.dart';
 import 'state_breathwork_session.dart';
 
 class BreathworkOptions extends StatefulWidget {
+  const BreathworkOptions({super.key});
   const BreathworkOptions({super.key});
 
   @override
@@ -14,17 +16,6 @@ class BreathworkOptions extends StatefulWidget {
 }
 
 class _BreathworkOptionsState extends State<BreathworkOptions> {
-  int getDurationInMilliseconds(BreathingSpeed speed) {
-    switch (speed) {
-      case BreathingSpeed.slow:
-        return 2000;
-      case BreathingSpeed.medium:
-        return 1600;
-      case BreathingSpeed.fast:
-        return 1200;
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -42,6 +33,7 @@ class _BreathworkOptionsState extends State<BreathworkOptions> {
             SizedBox(
                 height: 100,
                 width: 300,
+                width: 300,
                 child: Slider(
                   value: breathworkSession.noOfRounds.toDouble(),
                   onChanged: (value) {
@@ -52,14 +44,14 @@ class _BreathworkOptionsState extends State<BreathworkOptions> {
                   divisions: 4,
                   label: breathworkSession.noOfRounds.toString(),
                 )),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+            SizedBox(
+              width: 350,
               child: SegmentedButton(
                   segments: const [
                     ButtonSegment(
                         value: BreathingSpeed.slow, label: Text('Slow')),
                     ButtonSegment(
-                        value: BreathingSpeed.medium, label: Text('Medium')),
+                        value: BreathingSpeed.medium, label: Text('Normal')),
                     ButtonSegment(
                         value: BreathingSpeed.fast, label: Text('Fast')),
                   ],
@@ -73,6 +65,7 @@ class _BreathworkOptionsState extends State<BreathworkOptions> {
             SizedBox(
                 height: 100,
                 width: 300,
+                width: 300,
                 child: Slider(
                   value: breathworkSession.totalRepetitions.toDouble(),
                   onChanged: (value) {
@@ -84,6 +77,14 @@ class _BreathworkOptionsState extends State<BreathworkOptions> {
                   label: breathworkSession.totalRepetitions.toString(),
                 )),
             ElevatedButton(
+                onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const Breathwork(
+                          sessionStatus: SessionStatus.breathing,
+                        ),
+                      ),
+                    ),
+                child: const Text('Start'))
                 onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => const Breathwork(

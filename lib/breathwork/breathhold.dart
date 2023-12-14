@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:oxygenate/breathwork/inhale_hold.dart';
 import 'package:oxygenate/breathwork/state_breathwork_session.dart';
 import 'package:provider/provider.dart';
 
-import 'breathwork.dart';
-import 'enum_session_status.dart';
+import 'helpers/format_duration_to_string.dart';
 
 class BreathHold extends StatefulWidget {
   const BreathHold({Key? key}) : super(key: key);
@@ -17,13 +17,13 @@ class BreathHold extends StatefulWidget {
 class _BreathHoldState extends State<BreathHold> {
   final _stopwatch = Stopwatch();
   late Timer _timer;
-  int elapsedMilliseconds = 0;
+  String elapsedTime = '00:00';
 
   void _startTimer() {
     _stopwatch.start();
-    _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 1000), (timer) {
       setState(() {
-        elapsedMilliseconds = _stopwatch.elapsedMilliseconds;
+        elapsedTime = formatDisplayTime(_stopwatch.elapsed);
       });
     });
   }
@@ -61,9 +61,9 @@ class _BreathHoldState extends State<BreathHold> {
                           shape: BoxShape.circle,
                         ),
                       ),
-                      Text((elapsedMilliseconds.toDouble() / 1000).toString(),
+                      Text(elapsedTime,
                           style: const TextStyle(
-                              color: Colors.white, fontSize: 24)),
+                              color: Colors.black, fontSize: 24)),
                     ],
                   ),
                 ),
@@ -74,32 +74,16 @@ class _BreathHoldState extends State<BreathHold> {
                     ElevatedButton(
                       onPressed: () {
                         _stopwatch.stop();
-                        _timer.cancel();
                         breathworkSession.breathholdDurations =
                             breathworkSession.breathholdDurations +
-                                [
-                                  _stopwatch.elapsedMilliseconds.toDouble() /
-                                      1000
-                                ];
+                                [_stopwatch.elapsed];
                         _stopwatch.reset();
-                        if (breathworkSession.breathholdDurations.length ==
-                            breathworkSession.noOfRounds) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const Breathwork(
-                                sessionStatus: SessionStatus.finished,
-                              ),
-                            ),
-                          );
-                        } else {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const Breathwork(
-                                sessionStatus: SessionStatus.breathing,
-                              ),
-                            ),
-                          );
-                        }
+                        _timer.cancel();
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => InhaleHold(
+                                  breathworkSession: breathworkSession)),
+                        );
                       },
                       child: const Text('Stop'),
                     ),
